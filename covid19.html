@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>COVID-19 | Heatmap | GIS | WebMapping Application</title>
+    <link rel="stylesheet" href="./css/global.css" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="icon" href="./images/favicon.png" type="image/png" sizes="16x16">
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="./src/heatmap.js"></script>
+    <script src="./src/leaflet-heatmap.js"></script>
+    <script src="./src/getDataPoints.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div id="openSidebar" class="openSidebar" style="display: none;" onclick="getLatestData()">☰ INFO</div>
+    <div id="sidebar" class="sidebar">
+        <a class="closebtn" onclick="closeSidebar()">×</a>
+
+        <div id="covid19Info">
+            <div style="margin-left:15%">
+                <h2>COVID-19</h2>
+            </div>
+            <ul>
+                <li>
+                    <h4 style="color: yellow;">TOTAL CASES</h4>
+                    <p id="totalCases">0</p>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h4 style="color:red">DECEASED</h4>
+                    <p id="deceased">0</p>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h4 style="color:green">RECOVERED</h4>
+                    <p id="recovered">0</p>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h4 style="color: yellowgreen;">CURRENTLY SICK</h4>
+                    <p id="currentlySick">0</p>
+                </li>
+            </ul>
+            <div style="margin-left:10%;margin-top:20%;">
+                <h5><span>Last Updated:</span><span style="color: #fea0ff;margin-left:2%">23-03-2020 19:00</span></h5>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div id="map"></div>
+    <script>
+        function closeSidebar() {
+            document.getElementById("map").style.marginLeft = "0";
+            document.getElementById("sidebar").style.width = "0";
+            document.getElementById("openSidebar").style.display = "block";
+        }
+
+        function getLatestData() {
+            document.getElementById("openSidebar").style.display = "none";
+            document.getElementById("map").style.marginLeft = "260px";
+            document.getElementById("sidebar").style.width = "260px";
+
+            var dead = dataPoints.data.map(cp => cp.dead).reduce((acc, pt) => pt + acc);
+            var recovered = dataPoints.data.map(cp => cp.recovered).reduce((acc, pt) => pt + acc);
+            var currSick = dataPoints.data.map(cp => cp.sick).reduce((acc, pt) => pt + acc);
+            document.getElementById("totalCases").innerHTML = currSick + recovered + dead;
+            document.getElementById("deceased").innerHTML = dead;
+            document.getElementById("recovered").innerHTML = recovered;
+            document.getElementById("currentlySick").innerHTML = currSick;
+        }
+
+        window.onload = function() {
+
+            getLatestData();
+            var baseLayer = L.tileLayer(
+                'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                    maxZoom: 18
+                }
+            );
+            var cfg = {
+                "radius": 25,
+                "useLocalExtrema": true,
+                latField: 'lat',
+                lngField: 'lng',
+                valueField: 'count'
+            };
+            var heatmapLayer = new HeatmapOverlay(cfg);
+            var map = new L.Map('map', {
+                center: new L.LatLng(15.961329, 25.136719),
+                zoom: 3,
+                layers: [baseLayer, heatmapLayer],
+                zoomControl: false
+            });
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(map);
+            getIntensity = x => {
+                let intense;
+                if (x >= 1 && x <= 3000) {
+                    intense = 0.3
+                } else if (x >= 3001 && x <= 5000) {
+                    intense = 0.5
+                } else if (x >= 5001 && x <= 10000) {
+                    intense = 0.8
+                } else if (x >= 10001) {
+                    intense = 1.0
+                } else {
+                    intense = 0;
+                }
+                return intense;
+            };
+            var locations = dataPoints.data.map((x) => {
+                return {
+                    lat: x.latitude,
+                    lng: x.longitude,
+                    count: getIntensity(x.infected)
+                }
+            });
+            var locationData = {
+                data: locations
+            };
+            heatmapLayer.setData(locationData);
+            layer = heatmapLayer;
+        };
+    </script>
+</body>
+
+</html>
