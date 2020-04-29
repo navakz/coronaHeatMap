@@ -2,134 +2,753 @@
 <html lang="en">
 
 <head>
+    <title>Covid-19</title>
+    <base href="https://navakz.github.io/coronaHeatMap/">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>COVID-19 | Heatmap | GIS | WebMapping Application</title>
-    <link rel="stylesheet" href="./css/global.css" />
-    <link rel="stylesheet" href="./leaflet/leaflet.css" />
-    <link rel="icon" href="./images/favicon.png" type="image/png" sizes="16x16">
-    <script src="./leaflet/leaflet.js"></script>
-    <script src="./src/heatmap.js"></script>
-    <script src="./src/leaflet-heatmap.js"></script>
-    <script src="./src/getDataPoints.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/leaflet/leaflet.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!--[if lte IE 8]><link rel="stylesheet" href="./leaflet/leaflet.ie.css" /><![endif]-->
+
+    <link rel="stylesheet" href="./assets/css/leaflet.sidebar.css" />
+
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/redmond/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/css/ui.jqgrid.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/js/jquery.jqGrid.src.js"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <script src="./assets/js/urls.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        
+        html,
+        body,
+        #map {
+            height: 100%;
+            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+        
+        .lorem {
+            font-style: italic;
+            color: #AAA;
+        }
+    </style>
+<link rel="stylesheet" href="styles.3ff695c00d717f2d2a11.css"></head>
 
 <body>
-    <div id="openSidebar" class="openSidebar" style="display: none;" onclick="getLatestData()">☰ INFO</div>
-    <div id="sidebar" class="sidebar">
-        <a class="closebtn" onclick="closeSidebar()">×</a>
 
-        <div id="covid19Info">
-            <div style="margin-left:15%">
-                <h2>COVID-19</h2>
+    <div id="sidebarL" class="sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#patients" role="tab"><i class="fa fa-pie-chart"></i></a></li>
+                <li><a href="#countryData" role="tab"><i class="fa fa-flag"></i></a></li>
+                <li><a href="#faqs" role="tab"><i class="fa fa-question-circle"></i></a></li>
+                <li><a href="#apiInfo" role="tab"><i class="fa fa-info-circle"></i></a></li>
+                <li><a href="#newsInfo" role="tab"><i class="fa fa-newspaper-o"></i></a></li>
+                <li><a href="#timeSeries" role="tab"><i class="fa fa-users"></i></a></li>
+            </ul>
+
+            <ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header">
+                    Background
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <div style="margin-top: 10px;">
+                    <p>
+                        The coronavirus disease (COVID-19) has been identified as the cause of an outbreak of respiratory illness in Wuhan, Hubei Province, China beginning in December 2019. It belongs to a family of viruses that may cause various symptoms such as pneumonia,
+                        fever, breathing difficulty, and lung infection. These viruses are common in animals worldwide, but very few cases have been known to affect humans. The World Health Organization (WHO) used the term 2019 novel coronavirus to refer
+                        to a coronavirus that affected the lower respiratory tract of patients with pneumonia in Wuhan, China on 29 December 2019. The WHO announced that the official name of the 2019 novel coronavirus is coronavirus disease (COVID-19).
+                        And the current reference name for the virus is severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). It was reported that a cluster of patients with pneumonia of unknown cause was linked to a local Huanan South China Seafood
+                        Market in Wuhan, Hubei Province, China in December 2019. </p>
+                    <p>In response to the outbreak, the Chinese Center for Disease Control and Prevention (China CDC) dispatched a rapid response team to accompany health authorities of Hubei province and Wuhan city to conduct epidemiological and etiological
+                        investigations. The WHO confirmed that the outbreak of the coronavirus epidemic was associated with the Huanan South China Seafood Marketplace, but no specific animal association was identified. Scientists immediately started to
+                        research the source of the new coronavirus, and the first genome of COVID-19 was published by the research team led by Prof. Yong-Zhen Zhang, on 10 January 2020. Within 1 month, this virus spread quickly throughout China during
+                        the Chinese New Year – a period when there is a high level of human mobility among Chinese people. Although it is still too early to predict susceptible populations, early patterns have shown a trend similar to Severe Acute Respiratory
+                        Syndrome (SARS) and Middle East respiratory syndrome (MERS) coronaviruses. Susceptibility seems to be associated with age, biological sex, and other health conditions. COVID-19 has now been declared as a Public Health Emergency
+                        of International Concern by the WHO.
+
+                    </p>
+                </div>
+
             </div>
-            <ul>
-                <li>
-                    <h4 style="color: yellow;">TOTAL CASES</h4>
-                    <p id="totalCases">0</p>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <h4 style="color:red">DECEASED</h4>
-                    <p id="deceased">0</p>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <h4 style="color:green">RECOVERED</h4>
-                    <p id="recovered">0</p>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <h4 style="color: yellowgreen;">CURRENTLY SICK</h4>
-                    <p id="currentlySick">0</p>
-                </li>
-            </ul>
-            <div style="margin-left:10%;margin-top:20%;">
-                <h5><span>Last Updated:</span><span style="color: #fea0ff;margin-left:2%">24-03-2020 10:00</span></h5>
+
+            <div class="sidebar-pane" id="patients">
+                <h1 class="sidebar-header">CORONA UPDATES<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div style="margin-right:10px;">
+                    <figure class="highcharts-figure">
+                        <div id="container"></div>
+                        <p class="highcharts-description">
+
+                        </p>
+                    </figure>
+                </div>
+            </div>
+
+            <div class="sidebar-pane" id="countryData">
+                <h1 class="sidebar-header">GLOBAL DATA<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div class="tblData">
+                    <table id="covidGrid" class="col-md-12">
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <div id="pager"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-pane" id="faqs">
+                <h1 class="sidebar-header">FAQ's<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div style="margin-top: 10px;">
+                    <p>
+                        <b>How does the virus spread? Can it be in food?</b></br>
+                        </br>
+                        Coronavirus spreads mainly through droplets in the air. The virus can also be found on contaminated surfaces, and end up infecting someone after they touch the surface and then touch their face. (Whether coronavirus meets the definition of “airborne”
+                        is a matter of debate among scientists.) The reason we’re distancing ourselves at 6 feet (2 meters) or more is because, generally speaking, this is the range that will keep you protected if an infected individual is coughing or
+                        sneezes—and therefore spreading droplets with coronavirus through the air. Ideally you’d want to stay farther away, but 6 feet is a minimum. According to the FDA, there is currently no evidence that coronavirus transmission occurs
+                        through food. Keep up with the same steps you normally take to prevent foodborne illnesses. According to Harvard Medical School’s Coronavirus Resource Center, people who are infected with coronavirus but not showing symptoms can
+                        still spread the virus. Aerosolized droplets containing the virus can still exit the body through breaths and speech and float through the air, infecting healthy individuals. Masks can help prevent the spread of the virus. Contact
+                        tracing has also been an aggressive tool in tracking down potentially sick individuals and testing and isolating them.
+                    </p>
+                    <p>
+                        <b>Can infections cause permanent effects and complications?</b></br>
+                        </br>
+                        Yes. Many patients who come down with covid-19 pneumonia experience acute respiratory distress syndrome (ARDS), a form of respiratory failure where the lungs are suddenly overwhelmed by inflammation and unable to deliver oxygen to the body’s vital organs.
+                        ARDS has a mortality rate of 30 to 40 percent and is the leading cause of covid-19-related deaths. There isn’t a whole lot of literature about what happens if you survive ARDS, but long-term lung damage is a possibility, especially
+                        for older individuals. UK doctors report that lung damage sustained by ARDS survivors may take 15 years to heal. Hong Kong doctors told the South China Morning Post that they witnessed some covid-19 survivors see a 20 to 30 percent
+                        drop in lung function after recovering from infection. If PCR tests are so easily contaminated, how sure are we about the accuracy of the case numbers? Should we be suspicious? PCR is a gold standard platform for testing. Even
+                        a tiny amount of virus in a patient sample can be found and amplified for detection and testing. That doesn’t mean the test is fool-proof. Yes, the reagents can be easily contaminated—which is precisely what botched the CDC’s initial
+                        rollout of coronavirus tests in February. But that’s why there are control tests that are used to ensure the entire platform is running as it should. The problem with the CDC’s February tests were that the negative controls were
+                        faulty—which was almost immediately made known. There is no real reason to be suspicious of PCR tests for diagnosing coronavirus.It’s probably the most accurate testing platform we have for diagnosing covid-19.
+                    </p>
+                    <p>
+                        <b>How does coronavirus affect pregnancy?</b></br>
+                        </br>
+                        At this time, there is no evidence to suggest being pregnant increases your risk for getting coronavirus, or that your risk of developing severe symptoms increases with pregnancy. According to the CDC, there is no increased risk of miscarriage with covid-19.
+                        We don’t have much data on whether SARS-CoV-2 can infect infants, and the limited data we have, according to Harvard Medical School, the vast majority of mothers with covid-19 gave birth to babies who showed no clinical evidence
+                        of infection. There is also no evidence of the virus infecting breastmilk. Expecting mothers should practice safe hygiene and social distancing at this time, and should also speak with their healthcare providers if they have any
+                        specific questions. Have restrictions and lockdowns prevented flu transmission and deaths as well? The 2019-2020 influenza season saw a steady decline in numbers throughout the month of March. According to the CDC, the number of
+                        clinical cases testing positive for flu decreased from 24.3 percent at the end of February, to 2.1 percent for the week ending in March 28. That’s not exactly surprising, as numbers always tend to decline as we near April. But
+                        the drop has been pretty sharp. It’s too early to say whether social distancing measures are responsible and how great of a role they played. Other factors involved include the effectiveness of the vaccine and how many people got
+                        it, how infectious the flu was this year, and how rigorously people were tested (and whether the covid-19 pandemic played a role in incentivizing testing). We won’t know for sure until epidemiologists get a chance to look over
+                        the data.
+                    </p>
+                    <p>
+                        <b>Does Covid-19 really cause a loss of smell and taste?</b></br>
+                        </br>
+                        On March 20, scientists with ENT UK, a professional organization representing ear, nose and throat doctors, reported that the loss of smell and taste seemed to be a symptom of coronavirus infections, based on anecdotal reports from colleagues around the
+                        world. The authors wrote that it seemed 30 percent of confirmed Covid-19 cases in South Korea experienced anosmia (loss of smell) “as their major presenting symptom in otherwise mild cases.” In Germany, anosmia was reported by
+                        two-thirds of Covid-19 patients. And the truth is, it’s not entirely surprising. Post-viral anosmia is the cause of 40 percent of all cases where someone loses their sense of smell. The ENT UK statement says previously studied
+                        coronaviruses cause anosmia in 10 to 15 percent of all infections. Although it’s a normal part of many viral infections, the reason anosmia is a concern for Covid-19 is because it’s often presenting itself in very mild infections,
+                        in the absence of more severe symptoms like fever, coughing and shortness of breath. These are people who aren’t really presenting as ill in any significant way, so they may not be self-isolating themselves as they should. But
+                        before we jump to conclusions, we need to wait for published data that shows without a doubt anosmia is a symptom of Covid-19. If you’re experiencing a loss of smell and taste these days, it’s not a definitive sign that you have
+                        coronavirus. But it might be a sign that you should be extra vigilant about self-isolating, and perhaps seek out a Covid-19 test (if it’s available).
+                    </p>
+                    <p>
+                        <b>How does this end?</b></br>
+                        </br>
+                        Nobody knows. Epidemiologists at Imperial College London suggest we could see a worst-case scenario of 264 million Americans infected and 2.2 million dead. We also don’t know some important things about the virus, including how many asymptomatic cases
+                        there are, making it difficult to plan. After the outbreak in Wuhan became public in late December, Chinese authorities began enforcing strict measures on travel and activity designed to stop the spread of the virus as aggressively
+                        as possible. It seems to be working: China reported no new cases in Wuhan on March 15. Strict measures are said to have helped reduce the number of new infections in hard-hit places like South Korea as well. Unfortunately, for
+                        every South Korea or Singapore, there’s a case like Italy, which did not handle the initial outbreak well and is now reeling from the effects, with the virus spreading incredibly fast and taxing health-care systems well beyond
+                        capacity. That’s part of the reason we don’t know how this will end—we don’t yet have a system of containing the virus that is universally adhered to around the world. Just last week, the UK was suggesting it would forgo strict
+                        mandates on social distancing and isolation, and instead take a slow approach that would allow over 60% of its population to become infected in order to encourage herd immunity. The about-face on this policy may have come too late.
+                        The pandemic could reach a natural end when it finally spreads to nearly every part of the world and no longer has anywhere else to go. But that would leave an unthinkable number of people dead. We could see a combination of various
+                        antiviral treatments being fast-tracked sooner to help treat cases, and continued efforts to help slow the spread and “flatten the curve” (more on that below). But the solution that saves the most lives is a vaccine that provides
+                        immunity. That will probably take another 18 months to develop, and there’s no telling yet how effective it might be.
+                    </p>
+                    <p>
+                        <b>How is a quarantine supposed to work?</b></br>
+                        </br>
+                        The idea behind quarantine is to isolate people who are or may be infected, in order to prevent them from transmitting the illness to others, or to sequester healthy people and make sure they stay healthy. If you restrict someone’s movements beyond the
+                        incubation period of the infection, you can isolate new cases as they come up, prevent the spread of infection, and treat those who fall sick. CDC researcher examined flu cultures CDC There’s some elasticity in what qualifies as
+                        a quarantine. Not being allowed to leave home, or being kept in isolation within a hospital, are pretty strict forms. Sometimes quarantines are not mandatory, but self-imposed by individuals who think they might be sick and doing
+                        the right thing by waiting out the incubation period (or recovering from illness) before going out in public again. Quarantines are only one of a list of actions that can be taken to increase social distancing and help “flatten
+                        the curve”—limit the number of cases at any one time, so the peak caseload is much easier for health-care systems to manage.
+                    </p>
+                    <p>
+                        <b>How fast can coronavirus mutate?</b></br>
+                        </br>
+                        Mutations are natural to every gene on the planet, including those that are part of viruses. In fact, we can study these mutations in the coronavirus genome itself to see whether outbreaks in a single country are related. So far, it appears the rate of
+                        mutation in coronavirus is less than half the rate of eight to 10 times per month for influenza. And more specific numbers will come as researchers spend more time studying the virus. It’s harder to say how specifically we can
+                        use this information. Multiple genetic mutations are required for a virus to evolve into something more virulent or threatening. Current research suggests the two major strains of coronavirus affecting humans differ by just 0.007%.
+                        There’s no reason to think a vaccine developed for one won’t work against the other.
+                    </p>
+                    <p>
+                        <b>If you survive coronavirus once, can you be reinfected?</b></br>
+                        </br>
+                        There are a few reports so far that individuals who’ve contracted the disease and been cleared of the virus have tested positive again. So far these seem to be extremely rare —in China they seem to account for less than 0.2% of all infections. Other literature
+                        shows that scientists have observed persistent infections of coronaviruses in animals. We still don’t know enough about the virus or about how immunity develops after infection to say much about how this might work. Thus far it
+                        seems rare enough not to be alarmed about. And most scientists seem to think errors more likely explain why some recovered patients are testing positive.
+                    </p>
+                    <p>
+                        <b>What should we expect as spring arrives? Will the warm weather hurt or help our efforts to stop the virus?</b></br>
+                        </br>
+                        A big question scientists are trying to answer is whether coronavirus peaks during the winter and ebbs during the summer, like the flu. If there’s a seasonal aspect to the virus, then it also means we have to plan for levels of infection in the Northern
+                        Hemisphere to rise rapidly as autumn sets in. The answer is unclear. A new study that hasn’t been peer-reviewed yet suggests that 95% of positive cases globally have thus far occurred between -2 and 10 °C, which could indicate
+                        greater transmission in cooler climates. The prospect of seasonality is already influencing how some countries are approaching the problem. The UK’s maligned former strategy to encourage herd immunity assumed in part that the country
+                        needed to plan for keeping its health-care system from being overwhelmed by peak caseloads in winter. Yet so many different variables can influence transmission. We’ve only known about the virus for a few months and have yet to
+                        actually observe what will happen as the seasons change. The virus may just barrel through the summer unimpeded, or it may exhibit stranger behavior in the winter. We need more data to make strong predictions.
+                    </p>
+                    <p>
+                        <b>How long are people contagious when they are infected?</b></br>
+                        </br>
+                        The answer depends on the study you read. A recent study by German scientists suggests that people who test positive are most contagious before they’ve started exhibiting symptoms and during the first week that symptoms show up. Symptoms can appear anywhere
+                        between two and 14 days after infection. On the plus side, the same study shows that after about eight to 10 days of symptoms, patients were no longer infectious. This seems to show that though the disease is pretty contagious
+                        at the onset, the body gets rid of the virus quickly once antibody production turns on (which is typically within six to 12 days). Yet another study, however, suggests the virus can endure in the body for a median of 20 days after
+                        infection, and as long as 37 days in some cases. The rule of thumb being promoted so far is to remain quarantined for 14 days from the moment you develop symptoms.
+                    </p>
+                    <p>
+                        <b>What are the core health and medical tools, technologies, and resources we need to handle thousands or tens of thousands of cases in cities and towns around the US? Why haven’t we scaled up production?</b></br>
+                        </br>
+                        One of the biggest concerns facing health-care systems down the road is the availability of medical ventilators for hospitalized patients. Covid-19 is a respiratory disease, and for those severely affected, it's critical to be able to provide oxygen or
+                        mechanical help with breathing. The US has only 160,000 ventilators available at the moment—a fraction of what we may need if the virus hits harder. Current business models are just not designed to incentivize this level of manufacturing,
+                        though there are efforts to change that right now. But by far, the biggest immediate need is testing kits. “We have a simple message for all countries: test, test, test,” WHO director general Tedros Adhanom Ghebreyesus said in
+                        a press briefing Monday. Unfortunately, the US simply hasn’t been testing enough people, and it’s almost a certainty there are many more infections than cases that have been confirmed. Production is ramping up now thanks to new
+                        efforts by private and academic labs, but might be too late. Down the road, we’ll also need to figure out how to scale up manufacturing of antiviral treatments or even a viable vaccine.
+                    </p>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="apiInfo">
+                <h1 class="sidebar-header">API Collections<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <h2 class="sidebar-header">To Help in the COVID-19 Fight</h2>
+                <div style="margin-top: 10px;">
+
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkAS?version=latest">World Health Organization (WHO)</a></b> Twitter and YouTube API feeds for WHO, and their RSS feeds
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkAL?version=latest">Centers for Disease Control and Prevention (CDC)</a></b> Twitter and YouTube API feeds for CDC, and their RSS feeds for pulling
+                        information
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkAQ?version=latest">European Centre for Disease Prevention and Control (ECDC)</a></b> Twitter and YouTube API feeds for ECDC, and their RSS feeds for
+                        pulling information
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS8rjHv?version=latest">The COVID Tracking Project</a></b> The COVID Tracking Project collects information from 50 US states, the District of Columbia,
+                        and 5 other US territories to provide the most comprehensive testing data we can collect for the novel coronavirus, SARS-CoV-2.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/10808728/SzS8rjbc?version=latest">Coronavirus COVID19 API (covid19api.com)</a></b> An API for current cases and more information about COVID-19
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/4074074/SzS7Pkup?version=latest">COVID19-Tracker-REST API</a></b> An API for current cases and more information about COVID-19
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R6uu?version=latest">NovelCOVID API</a></b> An API for current cases and more information about COVID-19
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R74j?version=latest">COVID-19 API (nubentos.com)</a></b> The COVID-19 API provides information related with the case of pneumonia associated with the
+                        COVID-19 coronavirus
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R74n?version=latest">Coronavirus Data API (thevirustracker.com)</a></b> Provides global stats, country stats, full timeline, and country timeline for
+                        the coronavirus
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R74s?version=latest">Health API - COVID-19 (health-api.com)</a></b> Global Coronavirus statistics by country and state.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R74q?version=latest">Coronavirus Smartable (smartable.ai)</a></b> The coronavirus stats and news API offers latest and historic COVID-19 stats and news
+                        information per country or state
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R74r?version=latest">New South Wales Coronavirus Cases</a></b> New South Wales Coronavirus disease 2019 (COVID-19) cases
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/10724784/SzYW3LFa?version=latest">COVID-19 Finnhub API</a></b> Get real-time updates on the number of COVID-19 (Corona virus) cases in the US with a state-by-state
+                        breakdown. Data is sourced from CDC and reputable sources.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/10724784/SzYW3LUn?version=latest">COVID-19 Elsevier Research API</a></b> A research dataset search engine API (indexing datasets from 60+ scientific data repositories
+                        worldwide).
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/10724784/SzYXXKmA?version=latest">COVID19-India API</a></b> A volunteer-driven API for COVID-19 stats & patient tracing in India (Unofficial)
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/5310017/SzYW4LYY?version=latest">Covid India API</a></b> REST API to track Coronavirus cases in India on state level.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/10724784/SzYXWz3x?version=latest">COVID-19 Statistics API</a></b> Based on public data by Johns Hopkins CSSE
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/5665978/SzYXXedk?version=latest">COVID19 -India- API</a></b> The data is used from the official website of the Ministry of Health and Family Welfare of India.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkTz?version=latest">CDC Cases & Deaths (ScrAPI)</a></b> Scraping the COVID-19 cases and deaths from the CDC home page, converting the data to JSON,
+                        and saving it within an environment
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7R6gm?version=latest">CDC Testing (ScrAPI)</a></b> Scraping the number of specimens tested for SARS CoV-2 by CDC labs and U.S. public health laboratories
+                        from the CDC website
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkEm?version=latest">US Digital Registry API</a></b> An API for pulling federal government agencies and social media accounts
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkEp?version=latest">News API</a></b> An aggregate news API for pulling news from across multiple news sources
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzS7NkEt?version=latest">COVID-19 Twitter Searches</a></b> Twitter API search, with a handful of the common search COVID-19 search terms.
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzYT5MzV?version=latest">Twitter Accounts for State Government in 50 US States</a></b> State government Twitter accounts for all 50 states in the United
+                        States
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzYT5MzU?version=latest">Twitter Accounts for State Governors in 50 US States</a></b> State governor Twitter accounts for all 50 states in the United States
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzYT5MzW?version=latest">Twitter Accounts for State Health Departments in 50 US States</a></b> State health department Twitter accounts for all 50 states
+                        in the United States
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzYXVdyQ?version=latest">County Health Departments for All 50 US States</a></b> A single collection with a request for each of the 50 states, pulling a
+                        listing of name, website, address, phone, email, twitter, and facebook for all county health departments
+                    </p>
+                    <p>
+                        <b><a target="_blank" href="https://documenter.getpostman.com/view/8854915/SzYXVdyR?version=latest">Twitter Accounts for County Health Departments in all 50 US States</a></b> The Twitter accounts for over 300 county health departments
+                        across 50 US States
+                    </p>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="newsInfo">
+                <h1 class="sidebar-header">PATIENT'S HISTORY DATA (IN)<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div style="margin-top: 10px;" id="newsDiv">
+
+                </div>
+            </div>
+            <div class="sidebar-pane" id="timeSeries">
+                <h1 class="sidebar-header">TIME SERIES DATA (IN)<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div style="margin-top: 10px;">
+                    <div id="dailyConfirmedCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                    <div id="dailyDeceasedCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                    <div id="dailyRecoveredCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                    <div id="totalConfirmedCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                    <div id="totalDeceasedCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                    <div id="totalRecoveredCases" style="height: 300px; width: 300px; overflow-x: scroll;"></div>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <div style="margin-top: 10px;">Under Progress.....</div>
             </div>
         </div>
     </div>
-    </div>
-    <div id="map"></div>
+    <div id="map" class="sidebar-map"></div>
+    <script src="./assets/leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="./assets/css/leaflet_awesome_number_markers.css" />
+    <script src="./assets/js/leaflet_awesome_number_markers.js"></script>
+    <script src="./assets/js/leaflet.sidebar.js"></script>
+    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script src="https://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+
+    <script src="./assets/js/pulseIcon.js"></script>
+    <link rel="stylesheet" href="./assets/css/pulseIcon.css" />
+    <script src="./assets/js/heatmap.js"></script>
+    <script src="./assets/js/leaflet-heatmap.js"></script>
+
+
     <script>
-        function closeSidebar() {
-            document.getElementById("map").style.marginLeft = "0";
-            document.getElementById("sidebar").style.width = "0";
-            document.getElementById("openSidebar").style.display = "block";
-        }
+        var map = L.map('map');
+        map.setView([44.087585, -41.484375], 2);
+        map.attributionControl.addAttribution(' Data Updated : <label id="dataUpdateDate"></label>');
 
-        function getLatestData() {
-            document.getElementById("openSidebar").style.display = "none";
-            document.getElementById("map").style.marginLeft = "260px";
-            document.getElementById("sidebar").style.width = "260px";
+        var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-            var dead = dataPoints.data.map(cp => cp.dead).reduce((acc, pt) => pt + acc);
-            var recovered = dataPoints.data.map(cp => cp.recovered).reduce((acc, pt) => pt + acc);
-            var currSick = dataPoints.data.map(cp => cp.sick).reduce((acc, pt) => pt + acc);
-            document.getElementById("totalCases").innerHTML = currSick + recovered + dead;
-            document.getElementById("deceased").innerHTML = dead;
-            document.getElementById("recovered").innerHTML = recovered;
-            document.getElementById("currentlySick").innerHTML = currSick;
-        }
-
-        window.onload = function() {
-
-            getLatestData();
-            var baseLayer = L.tileLayer(
-                'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                    maxZoom: 18
-                }
-            );
-            var cfg = {
-                "radius": 25,
-                "useLocalExtrema": true,
-                latField: 'lat',
-                lngField: 'lng',
-                valueField: 'count'
-            };
-            var heatmapLayer = new HeatmapOverlay(cfg);
-            var map = new L.Map('map', {
-                center: new L.LatLng(15.961329, 25.136719),
-                zoom: 3,
-                layers: [baseLayer, heatmapLayer],
-                zoomControl: false
-            });
-            L.control.zoom({
-                position: 'bottomright'
-            }).addTo(map);
-            getIntensity = x => {
-                let intense;
-                if (x >= 1 && x <= 3000) {
-                    intense = 0.3
-                } else if (x >= 3001 && x <= 5000) {
-                    intense = 0.5
-                } else if (x >= 5001 && x <= 10000) {
-                    intense = 0.8
-                } else if (x >= 10001) {
-                    intense = 1.0
-                } else {
-                    intense = 0;
-                }
-                return intense;
-            };
-            var locations = dataPoints.data.map((x) => {
-                return {
-                    lat: x.latitude,
-                    lng: x.longitude,
-                    count: getIntensity(x.infected)
-                }
-            });
-            var locationData = {
-                data: locations
-            };
-            heatmapLayer.setData(locationData);
-            layer = heatmapLayer;
+        var baseMaps = {
+            "OpenStreetMap": OpenStreetMap
         };
+
+        var CoronaMarkers = L.markerClusterGroup();
+        var redPulsingIcon = L.icon.pulse({
+            iconSize: [14, 14],
+            color: 'red',
+            fillColor: 'red'
+        });
+        var orangePulsingIcon = L.icon.pulse({
+            iconSize: [10, 10],
+            color: 'orange',
+            fillColor: 'orange'
+        });
+        var greenPulsingIcon = L.icon.pulse({
+            iconSize: [8, 8],
+            color: 'green',
+            fillColor: 'green'
+        });
+        var coronaClustersArr = getJson(globalCasesURL);
+        var travelHistoryClustersArr = getJson(travelHistoryIndiaCasesURL).travel_history;
+
+
+        for (var i = 0; i < coronaClustersArr.length; i++) {
+            var a = coronaClustersArr[i];
+            var cases = a['stats']['confirmed']
+            var title = "<p> <span style='color:orange'> Confirmed : " + a['stats']['confirmed'] +
+                "</span></p><p> <span style='color:red'> Deaths : " + a['stats']['deaths'] +
+                "</span></p><p> <span style='color:green'> Recovered : " + a['stats']['recovered'] + "</span></p>";
+            var marker = L.marker(new L.LatLng(a['coordinates']['latitude'], a['coordinates']['longitude']), {
+                icon: (cases > 500 && cases < 1000) ? redPulsingIcon : (cases > 100 && cases < 500) ? orangePulsingIcon : greenPulsingIcon
+            });
+            marker.bindPopup(title);
+            CoronaMarkers.addLayer(marker);
+        }
+        map.addLayer(CoronaMarkers);
+
+        var travelHistoryLayergroup = new L.layerGroup();
+        var color = pickRandomColor();
+        for (var i = 0; i < travelHistoryClustersArr.length; i++) {
+            var a = travelHistoryClustersArr[i];
+            var latlng = a['latlong'];
+
+            if (latlng != '') {
+                latlng = latlng.split(',');
+                var title = "<p> <span> <b>Address</b> : " + a['address'] +
+                    "</span></p><p><span> <b>Data Source</b> : <a href=" + a['datasource'] + " target='_blank'>" + text_truncate(a['datasource'], 19) +
+                    "</a></span></p><p> <span> <b>Time From</b> : " + a['timefrom'] +
+                    "</span></p><p> <span> <b>Time To</b> : " + a['timeto'] + "</span></p>";
+                var travelHistoryMarkers = new L.marker(new L.LatLng(latlng[0], latlng[1]), {
+                    icon: new L.AwesomeNumberMarkers({
+                        number: i,
+                        markerColor: color
+                    })
+                });
+                travelHistoryMarkers.bindPopup(title);
+                travelHistoryLayergroup.addLayer(travelHistoryMarkers);
+            }
+        }
+        travelHistoryLayergroup.addTo(map);
+        var cfg = {
+            "radius": 25,
+            "useLocalExtrema": true,
+            latField: 'lat',
+            lngField: 'lng',
+            valueField: 'count'
+        };
+        var heatmapLayer = new HeatmapOverlay(cfg);
+        getIntensity = x => {
+            let intense;
+            if (x >= 1 && x <= 3000) {
+                intense = 0.3
+            } else if (x >= 3001 && x <= 5000) {
+                intense = 0.5
+            } else if (x >= 5001 && x <= 10000) {
+                intense = 0.8
+            } else if (x >= 10001) {
+                intense = 1.0
+            } else {
+                intense = 0;
+            }
+            return intense;
+        };
+        var locations = coronaClustersArr.map((x) => {
+            return {
+                lat: x['coordinates']['latitude'],
+                lng: x['coordinates']['longitude'],
+                count: getIntensity(x['stats']['confirmed'])
+            }
+        });
+        var locationData = {
+            data: locations
+        };
+        heatmapLayer.setData(locationData);
+        var overlayMaps = {
+            "Corona Clusters": CoronaMarkers,
+            "Travel History Markers": travelHistoryLayergroup,
+            "HeatMap Layer": heatmapLayer
+        }
+        map.addLayer(heatmapLayer);
+        L.control.layers(baseMaps, overlayMaps, {
+            position: 'topright',
+            collapsed: true
+        }).addTo(map);
+
+        var sidebarL = L.control.sidebar('sidebarL').addTo(map);
+
+        function getAllUpdates() {
+            $.getJSON(allCasesURL, function(result) {
+                const allUpdatesArr = [];
+                allUpdatesArr.push(['Cases', result.cases]);
+                allUpdatesArr.push(['Today Cases', result.todayCases]);
+                allUpdatesArr.push(['Deaths', result.deaths]);
+                allUpdatesArr.push(['Today Deaths', result.todayDeaths]);
+                allUpdatesArr.push(['Recovered', result.recovered]);
+                allUpdatesArr.push(['Active', result.active]);
+                allUpdatesArr.push(['Critical', result.critical]);
+
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'pie',
+                        options3d: {
+                            enabled: true,
+                            alpha: 45
+                        }
+                    },
+                    title: {
+                        text: ''
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    plotOptions: {
+                        pie: {
+                            innerSize: 50,
+                            depth: 45
+                        }
+                    },
+                    series: [{
+                        name: "No. of Persons",
+                        data: allUpdatesArr
+                    }]
+                });
+            });
+        }
+
+        function text_truncate(str, length, ending) {
+            if (length == null) {
+                length = 100;
+            }
+            if (ending == null) {
+                ending = '...';
+            }
+            if (str.length > length) {
+                return str.substring(0, length - ending.length) + ending;
+            } else {
+                return str;
+            }
+        };
+
+        function responsive_jqgrid(jqgrid) {
+            jqgrid.find('.ui-jqgrid').addClass('clear-margin span12').css('width', '');
+            jqgrid.find('.ui-jqgrid-view').addClass('clear-margin span12').css('width', '');
+            jqgrid.find('.ui-jqgrid-view > div').eq(1).addClass('clear-margin span12').css('width', '').css('min-height', '0');
+            jqgrid.find('.ui-jqgrid-view > div').eq(2).addClass('clear-margin span12').css('width', '').css('min-height', '0');
+            jqgrid.find('.ui-jqgrid-sdiv').addClass('clear-margin span12').css('width', '');
+            jqgrid.find('.ui-jqgrid-pager').addClass('clear-margin span12').css('width', '');
+        }
+
+        function getJson(url) {
+            return JSON.parse($.ajax({
+                type: 'GET',
+                url: url,
+                dataType: 'json',
+                global: false,
+                async: false,
+                success: function(data) {
+                    return data;
+                }
+            }).responseText);
+        }
+
+        function getTextColor(str) {
+            return str == "Recovered" ? "green" : "red";
+        }
+
+        function getRawData() {
+            var rawDataArr = getJson(rawDataURL).raw_data;
+            var strRawData = "";
+            for (var i in rawDataArr) {
+                strRawData += '<div class="card"><div class="container"><h5><b><label style="color:grey;">Patient No. : &nbsp;' + rawDataArr[i]['patientnumber'] +
+                    '</label></b></h5><h5><b><label style="color:brown;" title=' + rawDataArr[i]['backupnotes'] + '>' +
+                    rawDataArr[i]['backupnotes'] + '</label>&nbsp;&nbsp;<span style="color:navy;">' + rawDataArr[i]['agebracket'] + '</span>&nbsp;<span style="color:red;">' +
+                    rawDataArr[i]['gender'] +
+                    '</span></b></h5>' +
+                    '<h5>' + rawDataArr[i]['detectedstate'] + '</h5>' +
+                    '<p><span style="color:' + getTextColor(rawDataArr[i]['currentstatus']) + '">' + rawDataArr[i]['currentstatus'] + '</span></p>' +
+                    '<p> Sources :&nbsp;<a href=' + rawDataArr[i]['source1'] + '>Source 1</a>' + '&nbsp;<a href=' + rawDataArr[i]['source2'] + '>Source 2</a>' + '</p>' +
+                    '</p></div></div>'
+            }
+            $('#newsDiv').append(strRawData);
+        }
+
+        function getTimeSeriesData() {
+            var timeSeriesDataArr = getJson(timeSeriesURL).cases_time_series;
+            //console.log(timeSeriesDataArr);
+            var dailyConfirmedCasesDataArr = [],
+                dailyDeceasedCasesDataArr = [],
+                dailyRecoveredCasesDataArr = [],
+                totalConfirmedCasesDataArr = [],
+                totalDeceasedCasesDataArr = [],
+                totalRecoveredCasesDataArr = [];
+
+            for (var i in timeSeriesDataArr) {
+                dailyConfirmedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailyconfirmed']));
+                dailyDeceasedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailydeceased']));
+                dailyRecoveredCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailyrecovered']));
+                totalConfirmedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totalconfirmed']));
+                totalDeceasedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totaldeceased']));
+                totalRecoveredCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totalrecovered']));
+            }
+            var caseTimeSeriesData = [{
+                divId: 'dailyConfirmedCases',
+                name: 'Daily Confirmed Cases',
+                arr: dailyConfirmedCasesDataArr
+            }, {
+                divId: 'dailyDeceasedCases',
+                name: 'Daily Deceased Cases',
+                arr: dailyDeceasedCasesDataArr
+            }, {
+                divId: 'dailyRecoveredCases',
+                name: 'Daily Recovered Cases',
+                arr: dailyRecoveredCasesDataArr
+            }, {
+                divId: 'totalConfirmedCases',
+                name: 'Total Confirmed Cases',
+                arr: totalConfirmedCasesDataArr
+            }, {
+                divId: 'totalDeceasedCases',
+                name: 'Total Deceased Cases',
+                arr: totalDeceasedCasesDataArr
+            }, {
+                divId: 'totalRecoveredCases',
+                name: 'Total Recovered Cases',
+                arr: totalRecoveredCasesDataArr
+            }];
+            for (var t in caseTimeSeriesData) {
+                Highcharts.chart(caseTimeSeriesData[t].divId, {
+                    title: {
+                        text: caseTimeSeriesData[t].name
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Number of Patients'
+                        }
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            day: '%e of %b'
+                        }
+                    },
+                    scrollbar: {
+                        enabled: true
+                    },
+                    series: [{
+                        name: caseTimeSeriesData[t].name,
+                        data: caseTimeSeriesData[t].arr,
+                        pointStart: Date.UTC(2020, 0, 30),
+                        pointInterval: 24 * 3600 * 1000
+                    }]
+                });
+            }
+
+
+        }
+
+        function pickRandomColor() {
+            var colors = ['red', 'darkred', 'orange', 'green', 'darkgreen', 'blue', 'purple', 'darkpuple', 'cadetblue'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function tabularData() {
+            var $grid = $("#covidGrid");
+
+            $grid.jqGrid({
+                data: getJson(countryWiseCasesURL),
+                datatype: "local",
+                colNames: ["Country", "Deaths"],
+                colModel: [{
+                    name: "country",
+                    width: 160
+                }, {
+                    name: "deaths",
+                    width: 140
+                }],
+                pager: "#pager",
+                rowNum: 220,
+                rowList: [100, 212, 250],
+                //viewrecords: true,
+                rownumbers: true,
+                caption: "Country wise Death Cases",
+                height: "auto",
+                autoencode: true,
+                gridview: true,
+                ignoreCase: true,
+                autowidth: true,
+                onSelectRow: function(rowid) {
+                    var rowData = $(this).jqGrid("getLocalRow", rowid);
+
+                    bootbox.dialog({
+                        title: "<div style='text-align:center'><img src = " + rowData['countryInfo']['flag'] + " width=50 height=50></img>&nbsp;&nbsp;" + rowData['country'] + "</div>",
+                        message: "<div class='row'><div class='col-md-6 tblInfoHeaders'>Cases : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['cases'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Today Cases : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['todayCases'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Today Deaths : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['todayDeaths'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Recovered : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['recovered'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Active : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['active'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Critical : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['critical'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Tests : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['tests'] + "</div><br/>" +
+                            "<div class='row'><div class='col-md-6 tblInfoHeaders'>Continent : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['continent'] + "</div><br/>",
+                        size: 'small'
+                    });
+                },
+                beforeRequest: function() {
+                    responsive_jqgrid($(".jqGrid"));
+                }
+            });
+            $grid.jqGrid("navGrid", "#pager", {
+                add: false,
+                edit: false,
+                del: false
+            }, {}, {}, {}, {
+                multipleSearch: true,
+                multipleGroup: true
+            });
+            $grid.jqGrid("filterToolbar", {
+                defaultSearch: "cn",
+                stringResult: true
+            });
+        }
+
+        function getUpdatedDataDate() {
+            var d = new Date();
+            document.getElementById("dataUpdateDate").innerHTML = d;
+        }
+
+        setInterval(function() {
+            getAllUpdates();
+            getUpdatedDataDate();
+        }, 1.2e+6);
+
+        $(function() {
+            getAllUpdates();
+            getUpdatedDataDate();
+            tabularData();
+            getRawData();
+            getTimeSeriesData();
+        });
     </script>
-</body>
+    <app-root></app-root>
+<script src="runtime-es2015.1eba213af0b233498d9d.js" type="module"></script><script src="runtime-es5.1eba213af0b233498d9d.js" nomodule defer></script><script src="polyfills-es5.9e286f6d9247438cbb02.js" nomodule defer></script><script src="polyfills-es2015.690002c25ea8557bb4b0.js" type="module"></script><script src="main-es2015.7d2ac4b2170fe8565301.js" type="module"></script><script src="main-es5.7d2ac4b2170fe8565301.js" nomodule defer></script></body>
 
 </html>
