@@ -380,157 +380,105 @@
     <script src="./assets/js/heatmap.js"></script>
     <script src="./assets/js/leaflet-heatmap.js"></script>
     <script>
-        var map = L.map('map');
-        map.setView([44.087585, -41.484375], 2);
-        map.attributionControl.addAttribution(' Data Updated : <label id="dataUpdateDate"></label>');
-
-        var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: 'Map data &copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        var baseMaps = {
-            "OpenStreetMap": OpenStreetMap
-        };
-
-        var CoronaMarkers = L.markerClusterGroup();
-        var redPulsingIcon = L.icon.pulse({
-            iconSize: [14, 14],
-            color: 'red',
-            fillColor: 'red'
-        });
-        var orangePulsingIcon = L.icon.pulse({
-            iconSize: [10, 10],
-            color: 'orange',
-            fillColor: 'orange'
-        });
-        var greenPulsingIcon = L.icon.pulse({
-            iconSize: [8, 8],
-            color: 'green',
-            fillColor: 'green'
-        });
-        var coronaClustersArr = getJson(globalCasesURL);
-        var travelHistoryClustersArr = getJson(travelHistoryIndiaCasesURL).travel_history;
-
-
-        for (var i = 0; i < coronaClustersArr.length; i++) {
-            var a = coronaClustersArr[i];
-            var cases = a['stats']['confirmed']
-            var title = "<p> <span style='color:orange'> Confirmed : " + a['stats']['confirmed'] +
-                "</span></p><p> <span style='color:red'> Deaths : " + a['stats']['deaths'] +
-                "</span></p><p> <span style='color:green'> Recovered : " + a['stats']['recovered'] + "</span></p>";
-            var marker = L.marker(new L.LatLng(a['coordinates']['latitude'], a['coordinates']['longitude']), {
-                icon: (cases > 500 && cases < 1000) ? redPulsingIcon : (cases > 100 && cases < 500) ? orangePulsingIcon : greenPulsingIcon
-            });
-            marker.bindPopup(title);
-            CoronaMarkers.addLayer(marker);
+        var map = L.map("map");
+        map.setView([44.087585, -41.484375], 2), map.attributionControl.addAttribution(' Data Updated : <label id="dataUpdateDate"></label>');
+        for (var OpenStreetMap = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 18,
+                attribution: "Map data &copy; OpenStreetMap contributors"
+            }).addTo(map), baseMaps = {
+                OpenStreetMap: OpenStreetMap
+            }, CoronaMarkers = L.markerClusterGroup(), redPulsingIcon = L.icon.pulse({
+                iconSize: [14, 14],
+                color: "red",
+                fillColor: "red"
+            }), orangePulsingIcon = L.icon.pulse({
+                iconSize: [10, 10],
+                color: "orange",
+                fillColor: "orange"
+            }), greenPulsingIcon = L.icon.pulse({
+                iconSize: [8, 8],
+                color: "green",
+                fillColor: "green"
+            }), coronaClustersArr = getJson(globalCasesURL), travelHistoryClustersArr = getJson(travelHistoryIndiaCasesURL).travel_history, i = 0; i < coronaClustersArr.length; i++) {
+            var cases = (a = coronaClustersArr[i]).stats.confirmed,
+                title = "<p> <span style='color:orange'> Confirmed : " + a.stats.confirmed + "</span></p><p> <span style='color:red'> Deaths : " + a.stats.deaths + "</span></p><p> <span style='color:green'> Recovered : " + a.stats.recovered + "</span></p>",
+                marker = L.marker(new L.LatLng(a.coordinates.latitude, a.coordinates.longitude), {
+                    icon: cases > 500 && cases < 1e3 ? redPulsingIcon : cases > 100 && cases < 500 ? orangePulsingIcon : greenPulsingIcon
+                });
+            marker.bindPopup(title), CoronaMarkers.addLayer(marker)
         }
         map.addLayer(CoronaMarkers);
-
-        var travelHistoryLayergroup = new L.layerGroup();
-        var color = pickRandomColor();
-        for (var i = 0; i < travelHistoryClustersArr.length; i++) {
-            var a = travelHistoryClustersArr[i];
-            var latlng = a['latlong'];
-
-            if (latlng != '') {
-                latlng = latlng.split(',');
-                var title = "<p> <span> <b>Address</b> : " + a['address'] +
-                    "</span></p><p><span> <b>Data Source</b> : <a href=" + a['datasource'] + " target='_blank'>" + text_truncate(a['datasource'], 19) +
-                    "</a></span></p><p> <span> <b>Time From</b> : " + a['timefrom'] +
-                    "</span></p><p> <span> <b>Time To</b> : " + a['timeto'] + "</span></p>";
+        var travelHistoryLayergroup = new L.layerGroup,
+            color = pickRandomColor();
+        for (i = 0; i < travelHistoryClustersArr.length; i++) {
+            var a, latlng = (a = travelHistoryClustersArr[i]).latlong;
+            if ("" != latlng) {
+                latlng = latlng.split(",");
+                title = "<p> <span> <b>Address</b> : " + a.address + "</span></p><p><span> <b>Data Source</b> : <a href=" + a.datasource + " target='_blank'>" + text_truncate(a.datasource, 19) + "</a></span></p><p> <span> <b>Time From</b> : " + a.timefrom + "</span></p><p> <span> <b>Time To</b> : " + a.timeto + "</span></p>";
                 var travelHistoryMarkers = new L.marker(new L.LatLng(latlng[0], latlng[1]), {
                     icon: new L.AwesomeNumberMarkers({
                         number: i,
                         markerColor: color
                     })
                 });
-                travelHistoryMarkers.bindPopup(title);
-                travelHistoryLayergroup.addLayer(travelHistoryMarkers);
+                travelHistoryMarkers.bindPopup(title), travelHistoryLayergroup.addLayer(travelHistoryMarkers)
             }
         }
         travelHistoryLayergroup.addTo(map);
         var cfg = {
-            "radius": 25,
-            "useLocalExtrema": true,
-            latField: 'lat',
-            lngField: 'lng',
-            valueField: 'count'
-        };
-        var heatmapLayer = new HeatmapOverlay(cfg);
-        getIntensity = x => {
-            let intense;
-            if (x >= 1 && x <= 3000) {
-                intense = 0.3
-            } else if (x >= 3001 && x <= 5000) {
-                intense = 0.5
-            } else if (x >= 5001 && x <= 10000) {
-                intense = 0.8
-            } else if (x >= 10001) {
-                intense = 1.0
-            } else {
-                intense = 0;
-            }
-            return intense;
-        };
-        var locations = coronaClustersArr.map((x) => {
-            return {
-                lat: x['coordinates']['latitude'],
-                lng: x['coordinates']['longitude'],
-                count: getIntensity(x['stats']['confirmed'])
-            }
+                radius: 25,
+                useLocalExtrema: !0,
+                latField: "lat",
+                lngField: "lng",
+                valueField: "count"
+            },
+            heatmapLayer = new HeatmapOverlay(cfg);
+        getIntensity = (a => {
+            let e;
+            return e = a >= 1 && a <= 3e3 ? .3 : a >= 3001 && a <= 5e3 ? .5 : a >= 5001 && a <= 1e4 ? .8 : a >= 10001 ? 1 : 0
         });
-        var locationData = {
-            data: locations
-        };
+        var locations = coronaClustersArr.map(a => ({
+                lat: a.coordinates.latitude,
+                lng: a.coordinates.longitude,
+                count: getIntensity(a.stats.confirmed)
+            })),
+            locationData = {
+                data: locations
+            };
         heatmapLayer.setData(locationData);
         var overlayMaps = {
             "Corona Clusters": CoronaMarkers,
             "Travel History Markers": travelHistoryLayergroup,
             "HeatMap Layer": heatmapLayer
-        }
-        map.addLayer(heatmapLayer);
-        L.control.layers(baseMaps, overlayMaps, {
-            position: 'topright',
-            collapsed: false
+        };
+        map.addLayer(heatmapLayer), L.control.layers(baseMaps, overlayMaps, {
+            position: "topright",
+            collapsed: !1
         }).addTo(map);
-
-        var sidebarL = L.control.sidebar('sidebarL').addTo(map);
-
+        var sidebarL = L.control.sidebar("sidebarL").addTo(map);
         class DashboardInfo {
             getCovidInfo() {
-                this.tabularData();
-                this.getRawData();
-                this.getTimeSeriesData();
+                this.tabularData(), this.getRawData(), this.getTimeSeriesData()
             }
             intervalData() {
-                this.getAllUpdates();
-                getUpdatedDataDate();
+                this.getAllUpdates(), getUpdatedDataDate()
             }
             getAllUpdates() {
-                $.getJSON(allCasesURL, function(result) {
-                    const allUpdatesArr = [];
-                    allUpdatesArr.push(['Cases', result.cases]);
-                    allUpdatesArr.push(['Today Cases', result.todayCases]);
-                    allUpdatesArr.push(['Deaths', result.deaths]);
-                    allUpdatesArr.push(['Today Deaths', result.todayDeaths]);
-                    allUpdatesArr.push(['Recovered', result.recovered]);
-                    allUpdatesArr.push(['Active', result.active]);
-                    allUpdatesArr.push(['Critical', result.critical]);
-
-                    Highcharts.chart('container', {
+                $.getJSON(allCasesURL, function(a) {
+                    const e = [];
+                    e.push(["Cases", a.cases]), e.push(["Today Cases", a.todayCases]), e.push(["Deaths", a.deaths]), e.push(["Today Deaths", a.todayDeaths]), e.push(["Recovered", a.recovered]), e.push(["Active", a.active]), e.push(["Critical", a.critical]), Highcharts.chart("container", {
                         chart: {
-                            type: 'pie',
+                            type: "pie",
                             options3d: {
-                                enabled: true,
+                                enabled: !0,
                                 alpha: 45
                             }
                         },
                         title: {
-                            text: ''
+                            text: ""
                         },
                         subtitle: {
-                            text: ''
+                            text: ""
                         },
                         plotOptions: {
                             pie: {
@@ -540,103 +488,80 @@
                         },
                         series: [{
                             name: "No. of Persons",
-                            data: allUpdatesArr
+                            data: e
                         }]
-                    });
-                });
+                    })
+                })
             }
             getRawData() {
-                var rawDataArr = getJson(rawDataURL).raw_data;
-                var strRawData = "";
-                for (var i in rawDataArr) {
-                    strRawData += '<div class="card"><div class="container"><h5><b><label style="color:grey;">Patient No. : &nbsp;' + rawDataArr[i]['patientnumber'] +
-                        '</label></b></h5><h5><b><label style="color:brown;" title=' + rawDataArr[i]['backupnotes'] + '>' +
-                        rawDataArr[i]['backupnotes'] + '</label>&nbsp;&nbsp;<span style="color:navy;">' + rawDataArr[i]['agebracket'] + '</span>&nbsp;<span style="color:red;">' +
-                        rawDataArr[i]['gender'] +
-                        '</span></b></h5>' +
-                        '<h5>' + rawDataArr[i]['detectedstate'] + '</h5>' +
-                        '<p><span style="color:' + getTextColor(rawDataArr[i]['currentstatus']) + '">' + rawDataArr[i]['currentstatus'] + '</span></p>' +
-                        '<p> Sources :&nbsp;<a href=' + rawDataArr[i]['source1'] + '>Source 1</a>' + '&nbsp;<a href=' + rawDataArr[i]['source2'] + '>Source 2</a>' + '</p>' +
-                        '</p></div></div>'
-                }
-                $('#newsDiv').append(strRawData);
+                var a = getJson(rawDataURL).raw_data,
+                    e = "";
+                for (var r in a) e += '<div class="card"><div class="container"><h5><b><label style="color:grey;">Patient No. : &nbsp;' + a[r].patientnumber + '</label></b></h5><h5><b><label style="color:brown;" title=' + a[r].backupnotes + ">" + a[r].backupnotes + '</label>&nbsp;&nbsp;<span style="color:navy;">' + a[r].agebracket + '</span>&nbsp;<span style="color:red;">' + a[r].gender + "</span></b></h5><h5>" + a[r].detectedstate + '</h5><p><span style="color:' + getTextColor(a[r].currentstatus) + '">' + a[r].currentstatus + "</span></p><p> Sources :&nbsp;<a href=" + a[r].source1 + ">Source 1</a>&nbsp;<a href=" + a[r].source2 + ">Source 2</a></p></p></div></div>";
+                $("#newsDiv").append(e)
             }
             getTimeSeriesData() {
-                var timeSeriesDataArr = getJson(timeSeriesURL).cases_time_series;
-                //console.log(timeSeriesDataArr);
-                var dailyConfirmedCasesDataArr = [],
-                    dailyDeceasedCasesDataArr = [],
-                    dailyRecoveredCasesDataArr = [],
-                    totalConfirmedCasesDataArr = [],
-                    totalDeceasedCasesDataArr = [],
-                    totalRecoveredCasesDataArr = [];
-
-                for (var i in timeSeriesDataArr) {
-                    dailyConfirmedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailyconfirmed']));
-                    dailyDeceasedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailydeceased']));
-                    dailyRecoveredCasesDataArr.push(parseInt(timeSeriesDataArr[i]['dailyrecovered']));
-                    totalConfirmedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totalconfirmed']));
-                    totalDeceasedCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totaldeceased']));
-                    totalRecoveredCasesDataArr.push(parseInt(timeSeriesDataArr[i]['totalrecovered']));
-                }
-                var caseTimeSeriesData = [{
-                    divId: 'dailyConfirmedCases',
-                    name: 'Daily Confirmed Cases',
-                    arr: dailyConfirmedCasesDataArr
+                var a = getJson(timeSeriesURL).cases_time_series,
+                    e = [],
+                    r = [],
+                    t = [],
+                    s = [],
+                    o = [],
+                    i = [];
+                for (var n in a) e.push(parseInt(a[n].dailyconfirmed)), r.push(parseInt(a[n].dailydeceased)), t.push(parseInt(a[n].dailyrecovered)), s.push(parseInt(a[n].totalconfirmed)), o.push(parseInt(a[n].totaldeceased)), i.push(parseInt(a[n].totalrecovered));
+                var d = [{
+                    divId: "dailyConfirmedCases",
+                    name: "Daily Confirmed Cases",
+                    arr: e
                 }, {
-                    divId: 'dailyDeceasedCases',
-                    name: 'Daily Deceased Cases',
-                    arr: dailyDeceasedCasesDataArr
+                    divId: "dailyDeceasedCases",
+                    name: "Daily Deceased Cases",
+                    arr: r
                 }, {
-                    divId: 'dailyRecoveredCases',
-                    name: 'Daily Recovered Cases',
-                    arr: dailyRecoveredCasesDataArr
+                    divId: "dailyRecoveredCases",
+                    name: "Daily Recovered Cases",
+                    arr: t
                 }, {
-                    divId: 'totalConfirmedCases',
-                    name: 'Total Confirmed Cases',
-                    arr: totalConfirmedCasesDataArr
+                    divId: "totalConfirmedCases",
+                    name: "Total Confirmed Cases",
+                    arr: s
                 }, {
-                    divId: 'totalDeceasedCases',
-                    name: 'Total Deceased Cases',
-                    arr: totalDeceasedCasesDataArr
+                    divId: "totalDeceasedCases",
+                    name: "Total Deceased Cases",
+                    arr: o
                 }, {
-                    divId: 'totalRecoveredCases',
-                    name: 'Total Recovered Cases',
-                    arr: totalRecoveredCasesDataArr
+                    divId: "totalRecoveredCases",
+                    name: "Total Recovered Cases",
+                    arr: i
                 }];
-                for (var t in caseTimeSeriesData) {
-                    Highcharts.chart(caseTimeSeriesData[t].divId, {
+                for (var l in d) Highcharts.chart(d[l].divId, {
+                    title: {
+                        text: d[l].name
+                    },
+                    yAxis: {
                         title: {
-                            text: caseTimeSeriesData[t].name
-                        },
-                        yAxis: {
-                            title: {
-                                text: 'Number of Patients'
-                            }
-                        },
-                        xAxis: {
-                            type: 'datetime',
-                            dateTimeLabelFormats: {
-                                day: '%e of %b'
-                            }
-                        },
-                        scrollbar: {
-                            enabled: true
-                        },
-                        series: [{
-                            name: caseTimeSeriesData[t].name,
-                            data: caseTimeSeriesData[t].arr,
-                            pointStart: Date.UTC(2020, 0, 30),
-                            pointInterval: 24 * 3600 * 1000
-                        }]
-                    });
-                }
+                            text: "Number of Patients"
+                        }
+                    },
+                    xAxis: {
+                        type: "datetime",
+                        dateTimeLabelFormats: {
+                            day: "%e of %b"
+                        }
+                    },
+                    scrollbar: {
+                        enabled: !0
+                    },
+                    series: [{
+                        name: d[l].name,
+                        data: d[l].arr,
+                        pointStart: Date.UTC(2020, 0, 30),
+                        pointInterval: 864e5
+                    }]
+                })
             }
-
             tabularData() {
-                var $grid = $("#covidGrid");
-
-                $grid.jqGrid({
+                var a = $("#covidGrid");
+                a.jqGrid({
                     data: getJson(countryWiseCasesURL),
                     datatype: "local",
                     colNames: ["Country", "Deaths"],
@@ -650,117 +575,83 @@
                     pager: "#pager",
                     rowNum: 220,
                     rowList: [100, 212, 250],
-                    //viewrecords: true,
-                    rownumbers: true,
+                    rownumbers: !0,
                     caption: "Country wise Death Cases",
                     height: "auto",
-                    autoencode: true,
-                    gridview: true,
-                    ignoreCase: true,
-                    autowidth: true,
-                    onSelectRow: function(rowid) {
-                        var rowid = $("#covidGrid").jqGrid('getGridParam', 'selrow');
-                        var cellValue = $("#covidGrid").jqGrid('getCell', rowid, 'country');
-                        var countryData = getJson(countryWiseCasesURL);
-                        var rowData = countryData.find((element) => {
-                            return element.country == cellValue ? element : '';
-                        });
-
+                    autoencode: !0,
+                    gridview: !0,
+                    ignoreCase: !0,
+                    autowidth: !0,
+                    onSelectRow: function(a) {
+                        a = $("#covidGrid").jqGrid("getGridParam", "selrow");
+                        var e = $("#covidGrid").jqGrid("getCell", a, "country"),
+                            r = getJson(countryWiseCasesURL).find(a => a.country == e ? a : "");
                         bootbox.dialog({
-                            title: "<div style='text-align:center'><img src = " + rowData['countryInfo']['flag'] + " width=50 height=50></img>&nbsp;&nbsp;" + rowData['country'] + "</div>",
-                            message: "<div class='row'><div class='col-md-6 tblInfoHeaders'>Cases : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['cases'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Today Cases : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['todayCases'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Today Deaths : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['todayDeaths'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Recovered : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['recovered'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Active : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['active'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Critical : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['critical'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Tests : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['tests'] + "</div><br/>" +
-                                "<div class='row'><div class='col-md-6 tblInfoHeaders'>Continent : </div><div class='col-md-6 tblInfoValues'></div>" + rowData['continent'] + "</div><br/>",
-                            size: 'small'
-                        });
+                            title: "<div style='text-align:center'><img src = " + r.countryInfo.flag + " width=50 height=50></img>&nbsp;&nbsp;" + r.country + "</div>",
+                            message: "<div class='row'><div class='col-md-6 tblInfoHeaders'>Cases : </div><div class='col-md-6 tblInfoValues'></div>" + r.cases + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Today Cases : </div><div class='col-md-6 tblInfoValues'></div>" + r.todayCases + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Today Deaths : </div><div class='col-md-6 tblInfoValues'></div>" + r.todayDeaths + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Recovered : </div><div class='col-md-6 tblInfoValues'></div>" + r.recovered + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Active : </div><div class='col-md-6 tblInfoValues'></div>" + r.active + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Critical : </div><div class='col-md-6 tblInfoValues'></div>" + r.critical + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Tests : </div><div class='col-md-6 tblInfoValues'></div>" + r.tests + "</div><br/><div class='row'><div class='col-md-6 tblInfoHeaders'>Continent : </div><div class='col-md-6 tblInfoValues'></div>" + r.continent + "</div><br/>",
+                            size: "small"
+                        })
                     },
                     beforeRequest: function() {
-                        responsive_jqgrid($(".jqGrid"));
+                        responsive_jqgrid($(".jqGrid"))
                     }
-                });
-                $grid.jqGrid("navGrid", "#pager", {
-                    add: false,
-                    edit: false,
-                    del: false
+                }), a.jqGrid("navGrid", "#pager", {
+                    add: !1,
+                    edit: !1,
+                    del: !1
                 }, {}, {}, {}, {
-                    multipleSearch: true,
-                    multipleGroup: true
-                });
-                $grid.jqGrid("filterToolbar", {
+                    multipleSearch: !0,
+                    multipleGroup: !0
+                }), a.jqGrid("filterToolbar", {
                     defaultSearch: "cn",
-                    stringResult: true
-                });
+                    stringResult: !0
+                })
             }
         }
 
-        function isPositive(value) {
-            return value > 0;
+        function isPositive(a) {
+            return a > 0
         }
 
-        function text_truncate(str, length, ending) {
-            if (length == null) {
-                length = 100;
-            }
-            if (ending == null) {
-                ending = '...';
-            }
-            if (str.length > length) {
-                return str.substring(0, length - ending.length) + ending;
-            } else {
-                return str;
-            }
-        };
-
-        function responsive_jqgrid(jqgrid) {
-            jqgrid.find('.ui-jqgrid').addClass('clear-margin span12').css('width', '');
-            jqgrid.find('.ui-jqgrid-view').addClass('clear-margin span12').css('width', '');
-            jqgrid.find('.ui-jqgrid-view > div').eq(1).addClass('clear-margin span12').css('width', '').css('min-height', '0');
-            jqgrid.find('.ui-jqgrid-view > div').eq(2).addClass('clear-margin span12').css('width', '').css('min-height', '0');
-            jqgrid.find('.ui-jqgrid-sdiv').addClass('clear-margin span12').css('width', '');
-            jqgrid.find('.ui-jqgrid-pager').addClass('clear-margin span12').css('width', '');
+        function text_truncate(a, e, r) {
+            return null == e && (e = 100), null == r && (r = "..."), a.length > e ? a.substring(0, e - r.length) + r : a
         }
 
-        function getJson(url) {
+        function responsive_jqgrid(a) {
+            a.find(".ui-jqgrid").addClass("clear-margin span12").css("width", ""), a.find(".ui-jqgrid-view").addClass("clear-margin span12").css("width", ""), a.find(".ui-jqgrid-view > div").eq(1).addClass("clear-margin span12").css("width", "").css("min-height", "0"), a.find(".ui-jqgrid-view > div").eq(2).addClass("clear-margin span12").css("width", "").css("min-height", "0"), a.find(".ui-jqgrid-sdiv").addClass("clear-margin span12").css("width", ""), a.find(".ui-jqgrid-pager").addClass("clear-margin span12").css("width", "")
+        }
+
+        function getJson(a) {
             return JSON.parse($.ajax({
-                type: 'GET',
-                url: url,
-                dataType: 'json',
-                global: false,
-                async: false,
-                success: function(data) {
-                    return data;
+                type: "GET",
+                url: a,
+                dataType: "json",
+                global: !1,
+                async: !1,
+                success: function(a) {
+                    return a
                 }
-            }).responseText);
+            }).responseText)
         }
 
-        function getTextColor(str) {
-            return str == "Recovered" ? "green" : "red";
+        function getTextColor(a) {
+            return "Recovered" == a ? "green" : "red"
         }
 
         function pickRandomColor() {
-            var colors = ['red', 'darkred', 'orange', 'green', 'darkgreen', 'blue', 'purple', 'darkpuple', 'cadetblue'];
-            return colors[Math.floor(Math.random() * colors.length)];
+            var a = ["red", "darkred", "orange", "green", "darkgreen", "blue", "purple", "darkpuple", "cadetblue"];
+            return a[Math.floor(Math.random() * a.length)]
         }
 
         function getUpdatedDataDate() {
-            var d = new Date();
-            document.getElementById("dataUpdateDate").innerHTML = d;
+            var a = new Date;
+            document.getElementById("dataUpdateDate").innerHTML = a
         }
-
-        const dashboardInfo = new DashboardInfo();
-
+        const dashboardInfo = new DashboardInfo;
         setInterval(function() {
-            dashboardInfo.intervalData();
-        }, 1.2e+6);
-
-        $(function() {
-            dashboardInfo.intervalData();
-            dashboardInfo.getCovidInfo();
+            dashboardInfo.intervalData()
+        }, 12e5), $(function() {
+            dashboardInfo.intervalData(), dashboardInfo.getCovidInfo()
         });
     </script>
     <app-root></app-root>
