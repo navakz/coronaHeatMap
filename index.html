@@ -380,8 +380,15 @@
     <script src="./assets/js/heatmap.js"></script>
     <script src="./assets/js/leaflet-heatmap.js"></script>
     <script>
-        var map = L.map("map");
-        map.setView([44.087585, -41.484375], 2), map.attributionControl.addAttribution(' Data Updated : <label id="dataUpdateDate"></label>');
+        var map = L.map("map", {
+                minZoom: 3,
+            }),
+            artyom;
+
+        map.setView([44.087585, -41.484375], 3);
+        map.attributionControl.addAttribution(' <span class="attributionLabels">Data Updated</span> : <label id="dataUpdateDate"></label>');
+        map.attributionControl.addAttribution('<span class="attributionLabels">Sources</span> : COVID19 INDIA API, Novel COVID API');
+
         for (var OpenStreetMap = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 18,
                 attribution: "Map data &copy; OpenStreetMap contributors"
@@ -407,9 +414,12 @@
                 });
             marker.bindPopup(title), CoronaMarkers.addLayer(marker)
         }
+
         map.addLayer(CoronaMarkers);
+
         var travelHistoryLayergroup = new L.layerGroup,
             color = pickRandomColor();
+
         for (i = 0; i < travelHistoryClustersArr.length; i++) {
             var a, latlng = (a = travelHistoryClustersArr[i]).latlong;
             if ("" != latlng) {
@@ -424,6 +434,7 @@
                 travelHistoryMarkers.bindPopup(title), travelHistoryLayergroup.addLayer(travelHistoryMarkers)
             }
         }
+
         travelHistoryLayergroup.addTo(map);
         var cfg = {
                 radius: 25,
@@ -433,10 +444,12 @@
                 valueField: "count"
             },
             heatmapLayer = new HeatmapOverlay(cfg);
+
         getIntensity = (a => {
             let e;
             return e = a >= 1 && a <= 3e3 ? .3 : a >= 3001 && a <= 5e3 ? .5 : a >= 5001 && a <= 1e4 ? .8 : a >= 10001 ? 1 : 0
         });
+
         var locations = coronaClustersArr.map(a => ({
                 lat: a.coordinates.latitude,
                 lng: a.coordinates.longitude,
@@ -445,16 +458,20 @@
             locationData = {
                 data: locations
             };
+
         heatmapLayer.setData(locationData);
+
         var overlayMaps = {
             "Corona Clusters": CoronaMarkers,
             "Travel History Markers": travelHistoryLayergroup,
             "HeatMap Layer": heatmapLayer
         };
+
         map.addLayer(heatmapLayer), L.control.layers(baseMaps, overlayMaps, {
             position: "topright",
             collapsed: !1
         }).addTo(map);
+
         var sidebarL = L.control.sidebar("sidebarL").addTo(map);
         class DashboardInfo {
             getCovidInfo() {
@@ -493,12 +510,14 @@
                     })
                 })
             }
+
             getRawData() {
                 var a = getJson(rawDataURL).raw_data,
                     e = "";
                 for (var r in a) e += '<div class="card"><div class="container"><h5><b><label style="color:grey;">Patient No. : &nbsp;' + a[r].patientnumber + '</label></b></h5><h5><b><label style="color:brown;" title=' + a[r].backupnotes + ">" + a[r].backupnotes + '</label>&nbsp;&nbsp;<span style="color:navy;">' + a[r].agebracket + '</span>&nbsp;<span style="color:red;">' + a[r].gender + "</span></b></h5><h5>" + a[r].detectedstate + '</h5><p><span style="color:' + getTextColor(a[r].currentstatus) + '">' + a[r].currentstatus + "</span></p><p> Sources :&nbsp;<a href=" + a[r].source1 + ">Source 1</a>&nbsp;<a href=" + a[r].source2 + ">Source 2</a></p></p></div></div>";
                 $("#newsDiv").append(e)
             }
+
             getTimeSeriesData() {
                 var a = getJson(timeSeriesURL).cases_time_series,
                     e = [],
@@ -559,6 +578,7 @@
                     }]
                 })
             }
+
             tabularData() {
                 var a = $("#covidGrid");
                 a.jqGrid({
@@ -609,10 +629,6 @@
             }
         }
 
-        function isPositive(a) {
-            return a > 0
-        }
-
         function text_truncate(a, e, r) {
             return null == e && (e = 100), null == r && (r = "..."), a.length > e ? a.substring(0, e - r.length) + r : a
         }
@@ -647,7 +663,9 @@
             var a = new Date;
             document.getElementById("dataUpdateDate").innerHTML = a
         }
+
         const dashboardInfo = new DashboardInfo;
+
         setInterval(function() {
             dashboardInfo.intervalData()
         }, 12e5), $(function() {
@@ -655,6 +673,7 @@
         });
     </script>
     <app-root></app-root>
+
     <script src="runtime-es2015.1eba213af0b233498d9d.js" type="module"></script>
     <script src="runtime-es5.1eba213af0b233498d9d.js" nomodule defer></script>
     <script src="polyfills-es5.9e286f6d9247438cbb02.js" nomodule defer></script>
