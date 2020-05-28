@@ -394,7 +394,9 @@
                 attribution: "Map data &copy; OpenStreetMap contributors"
             }).addTo(map), baseMaps = {
                 OpenStreetMap: OpenStreetMap
-            }, CoronaMarkers = L.markerClusterGroup(), redPulsingIcon = L.icon.pulse({
+            }, CoronaMarkers = L.markerClusterGroup({
+                showCoverageOnHover: false
+            }), redPulsingIcon = L.icon.pulse({
                 iconSize: [14, 14],
                 color: "red",
                 fillColor: "red"
